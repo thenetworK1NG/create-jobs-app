@@ -736,6 +736,42 @@ function setupAutoScroll() {
         }
       }, 10);
     }
+    
+    // Toggle API Task Integration section with "D" key
+    if (e.key === 'D' || e.key === 'd') {
+      // Only trigger if not typing in an input field
+      if (!['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+        e.preventDefault();
+        const demoSection = document.getElementById('demoFeaturesSection');
+        if (demoSection) {
+          const isHidden = demoSection.style.display === 'none';
+          demoSection.style.display = isHidden ? 'block' : 'none';
+          
+          // Show a brief notification
+          const notification = document.createElement('div');
+          notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+          `;
+          notification.textContent = `API Integration ${isHidden ? 'Enabled' : 'Hidden'}`;
+          document.body.appendChild(notification);
+          
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.parentNode.removeChild(notification);
+            }
+          }, 2000);
+        }
+      }
+    }
   });
 }
 
