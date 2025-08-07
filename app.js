@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+import { getDatabase, ref, push, update } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -81,7 +81,7 @@ function saveToJobCardSystem(shouldLaunchApiTask = false) {
         banner_canvas,
         boards
     })
-    .then(() => {
+    .then((firebaseRef) => {
         const successMessage = shouldLaunchApiTask ? 
             'Saved to Job Card System! Creating API task...' : 
             'Saved to Job Card System successfully!';
@@ -92,10 +92,10 @@ function saveToJobCardSystem(shouldLaunchApiTask = false) {
         // Show assignment notification
         showAssignmentNotification(assignedTo);
         
-        // If should launch API task, do it now
+        // If should launch API task, do it now and pass the Firebase reference
         if (shouldLaunchApiTask) {
             setTimeout(() => {
-                launchApiTask();
+                launchApiTask(firebaseRef);
             }, 1000); // Small delay to show the Firebase success message
         } else {
             // Reset buttons and show reset icon for save-only
@@ -145,7 +145,7 @@ function setButtonsLoading(isLoading, isLaunchButton) {
 }
 
 // Function to launch API task
-async function launchApiTask() {
+async function launchApiTask(firebaseRef = null) {
     try {
         // Check if API form fields are properly filled
         const apiUsername = document.getElementById('apiUsername').value;
@@ -160,8 +160,8 @@ async function launchApiTask() {
         // Update status to show API task creation
         document.getElementById('status').textContent = 'Job card saved! Now creating API task...';
         
-        // Create API task manually using the TaskCreator
-        await createApiTaskManually();
+        // Create API task manually using the TaskCreator and pass Firebase reference
+        await createApiTaskManually(firebaseRef);
         
     } catch (error) {
         console.error('Error launching API task:', error);
@@ -173,7 +173,7 @@ async function launchApiTask() {
 }
 
 // Manual API task creation as fallback
-async function createApiTaskManually() {
+async function createApiTaskManually(firebaseRef = null) {
     try {
         // Create a new TaskCreator instance
         const taskCreator = new TaskCreator();
@@ -207,6 +207,16 @@ async function createApiTaskManually() {
             const result = await taskCreator.createTask(data);
             
             if (result.result !== false && result.result !== null && result.result !== undefined) {
+                // Update Firebase with the task ID if we have a Firebase reference
+                if (firebaseRef) {
+                    try {
+                        await update(firebaseRef, { apiTaskId: result.result });
+                        console.log('Firebase job updated with API task ID:', result.result);
+                    } catch (error) {
+                        console.error('Failed to update Firebase with task ID:', error);
+                    }
+                }
+                
                 document.getElementById('status').textContent = `✅ Job card saved and API task created successfully! Task ID: ${result.result}`;
             } else {
                 document.getElementById('status').textContent = 'Job card saved, but API task creation failed.';
@@ -220,6 +230,16 @@ async function createApiTaskManually() {
             const result = await taskCreator.createTask(taskData);
             
             if (result.result !== false && result.result !== null && result.result !== undefined) {
+                // Update Firebase with the task ID if we have a Firebase reference
+                if (firebaseRef) {
+                    try {
+                        await update(firebaseRef, { apiTaskId: result.result });
+                        console.log('Firebase job updated with API task ID:', result.result);
+                    } catch (error) {
+                        console.error('Failed to update Firebase with task ID:', error);
+                    }
+                }
+                
                 document.getElementById('status').textContent = `✅ Job card saved and API task created successfully! Task ID: ${result.result}`;
             } else {
                 document.getElementById('status').textContent = 'Job card saved, but API task creation failed.';
