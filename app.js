@@ -736,42 +736,6 @@ function setupAutoScroll() {
         }
       }, 10);
     }
-    
-    // Toggle API Task Integration section with "D" key
-    if (e.key === 'D' || e.key === 'd') {
-      // Only trigger if not typing in an input field
-      if (!['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
-        e.preventDefault();
-        const demoSection = document.getElementById('demoFeaturesSection');
-        if (demoSection) {
-          const isHidden = demoSection.style.display === 'none';
-          demoSection.style.display = isHidden ? 'block' : 'none';
-          
-          // Show a brief notification
-          const notification = document.createElement('div');
-          notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            z-index: 1000;
-            font-weight: bold;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-          `;
-          notification.textContent = `API Integration ${isHidden ? 'Enabled' : 'Hidden'}`;
-          document.body.appendChild(notification);
-          
-          setTimeout(() => {
-            if (notification.parentNode) {
-              notification.parentNode.removeChild(notification);
-            }
-          }, 2000);
-        }
-      }
-    }
   });
 }
 
@@ -860,6 +824,31 @@ window.addEventListener('DOMContentLoaded', function() {
     });
   } else {
     console.log('Save and Launch button not found');
+  }
+  
+  // Add event listener for the API Toggle button
+  const toggleApiBtn = document.getElementById('toggleApiBtn');
+  if (toggleApiBtn) {
+    toggleApiBtn.addEventListener('click', function() {
+      const demoSection = document.getElementById('demoFeaturesSection');
+      if (demoSection) {
+        const isHidden = demoSection.style.display === 'none';
+        demoSection.style.display = isHidden ? 'block' : 'none';
+        
+        // Update button text
+        this.textContent = isHidden ? 'Hide API Integration' : 'Show API Integration';
+        
+        // Scroll to the section if showing it
+        if (isHidden) {
+          setTimeout(() => {
+            demoSection.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }, 100);
+        }
+      }
+    });
   }
   
   // Setup assignment-based API field auto-population
