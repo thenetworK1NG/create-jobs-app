@@ -1,0 +1,980 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', Arial, sans-serif;
+    background: linear-gradient(135deg, #86A8E7 0%, #91EAE4 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    /* Enable smooth scrolling for the entire page */
+    scroll-behavior: smooth;
+}
+
+.container {
+    max-width: 420px;
+    width: 95%;
+    margin: 40px auto;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+    backdrop-filter: blur(8px);
+    border-radius: 24px;
+    padding: 40px 32px 32px 32px;
+    border: 1px solid rgba(255,255,255,0.3);
+    position: relative;
+    z-index: 1;
+    /* Enable smooth scrolling within container */
+    scroll-behavior: smooth;
+    /* Ensure container can scroll if needed */
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 28px;
+    color: #227093;
+    font-size: 2.2rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 7px;
+    color: #218c8d;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+form input, form textarea, form select {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 2px 8px rgba(80, 80, 180, 0.07);
+    transition: box-shadow 0.2s, border 0.2s;
+    outline: none;
+    color: #3d246c;
+    font-family: inherit;
+}
+
+/* Enhanced focus styles for auto-scroll functionality */
+form input:focus, form textarea:focus, form select:focus {
+    box-shadow: 0 0 0 3px #218c8d88, 0 2px 8px rgba(34, 112, 147, 0.10);
+    border: 2px solid #218c8d;
+    animation: none;
+    /* Ensure focused elements are visible */
+    position: relative;
+    z-index: 10;
+}
+
+/* Smooth transition for focus states */
+form input, form textarea, form select, form button, .checkbox-group input[type="checkbox"] {
+    transition: all 0.3s ease;
+}
+
+/* Enhanced focus indicator for better accessibility */
+form input:focus, form textarea:focus, form select:focus, form button:focus, .checkbox-group input[type="checkbox"]:focus {
+    outline: 2px solid #a084ee !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 3px rgba(160, 132, 238, 0.2) !important;
+}
+
+/* Visual feedback for focused elements during auto-scroll */
+form input.focused, form textarea.focused, form select.focused, form button.focused {
+    animation: focusPulse 1s ease-in-out;
+    /* Enhanced glow effect for centered elements */
+    box-shadow: 0 0 0 3px rgba(160, 132, 238, 0.3), 0 4px 20px rgba(160, 132, 238, 0.2) !important;
+}
+
+@keyframes focusPulse {
+    0% { 
+        transform: scale(1); 
+        box-shadow: 0 0 0 3px rgba(160, 132, 238, 0.2), 0 2px 8px rgba(160, 132, 238, 0.1);
+    }
+    50% { 
+        transform: scale(1.02); 
+        box-shadow: 0 0 0 4px rgba(160, 132, 238, 0.4), 0 6px 25px rgba(160, 132, 238, 0.3);
+    }
+    100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 0 3px rgba(160, 132, 238, 0.2), 0 2px 8px rgba(160, 132, 238, 0.1);
+    }
+}
+
+/* Enhanced focus styles for better centering feedback */
+form input:focus, form textarea:focus, form select:focus, form button:focus {
+    box-shadow: 0 0 0 3px #218c8d88, 0 2px 8px rgba(34, 112, 147, 0.10);
+    border: 2px solid #218c8d;
+    animation: none;
+    /* Ensure focused elements are visible */
+    position: relative;
+    z-index: 10;
+    /* Add a subtle glow to indicate centering */
+    background: rgba(255,255,255,0.95);
+    transition: all 0.3s ease;
+}
+
+/* Special styling for centered focused elements */
+form input:focus:not(.focused), form textarea:focus:not(.focused), form select:focus:not(.focused), form button:focus:not(.focused) {
+    background: rgba(255,255,255,1);
+    box-shadow: 0 0 0 3px rgba(160, 132, 238, 0.4), 0 4px 16px rgba(160, 132, 238, 0.2);
+}
+
+/* Enhanced section highlighting */
+.form-section {
+    background: rgba(255,255,255,0.85);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(160, 132, 238, 0.06);
+    padding: 22px 18px 12px 18px;
+    margin-bottom: 22px;
+    border-left: 4px solid #a084ee33;
+    border-right: 4px solid #8ec5fc22;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.form-section:not(:first-child) {
+    margin-top: 10px;
+}
+
+/* Active section styling */
+.form-section.active {
+    border-left: 4px solid #a084ee;
+    box-shadow: 0 4px 16px rgba(160, 132, 238, 0.15);
+    background: rgba(255,255,255,0.95);
+}
+
+.section-title {
+    font-size: 1.18rem;
+    color: #227093;
+    font-weight: 600;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 0 #fff;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(90deg, #86A8E7 0%, #91EAE4 100%);
+    color: #fff;
+    border: none;
+    border-radius: 18px;
+    font-size: 1.18rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(160, 132, 238, 0.18);
+    transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.7px;
+    margin-top: 18px;
+}
+
+button[type="submit"]:hover {
+    background: linear-gradient(90deg, #91EAE4 0%, #86A8E7 100%);
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 12px 32px rgba(160, 132, 238, 0.22);
+}
+
+#status {
+    margin-top: 18px;
+    text-align: center;
+    color: #227093;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    min-height: 24px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    box-shadow: none;
+    background: #fff;
+    border-radius: 12px;
+    padding: 8px 0;
+}
+
+#status.visible {
+    opacity: 1;
+    animation: none;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 24px 8px 18px 8px;
+        max-width: 98vw;
+    }
+    h1 {
+        font-size: 1.3rem;
+    }
+    form input, form textarea, form select {
+        font-size: 0.98rem;
+        padding: 10px 8px;
+    }
+    button[type="submit"] {
+        font-size: 1rem;
+        padding: 12px;
+    }
+}
+
+/* Decorative abstract SVG background (optional, can be added to HTML for more flair) */
+
+.checkbox-group label {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 18px;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 7px;
+    accent-color: #a084ee;
+    transform: scale(1.15);
+}
+
+.checkbox-group {
+    margin-bottom: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 0;
+}
+
+.checkbox-group legend {
+    font-weight: 600;
+    color: #227093;
+    margin-bottom: 6px;
+    font-size: 1.08rem;
+    width: 100%;
+}
+
+#saveMenuBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+    display: flex;
+    align-items: center;
+    transition: filter 0.18s, box-shadow 0.18s;
+}
+#saveMenuBtn:focus, #saveMenuBtn:active {
+    outline: 2px solid #218c8d !important;
+    box-shadow: 0 0 0 2px #218c8d44;
+}
+#saveIcon.bounce {
+    animation: save-bounce-plain 0.3s cubic-bezier(.36,1.56,.64,1) 1;
+}
+@keyframes save-bounce-plain {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+#saveIcon {
+    display: block;
+}
+#saveLoadMenu {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(34,112,147,0.10);
+    min-width: 150px;
+    z-index: 10;
+    padding: 0;
+    margin-top: 10px;
+    border: 1.5px solid #e0f7fa;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s;
+}
+#saveLoadMenu.animated-in {
+    opacity: 1;
+    pointer-events: auto;
+}
+#saveLoadMenu.animated-out {
+    opacity: 0;
+    pointer-events: none;
+}
+#saveLoadMenu button {
+    color: #218c8d;
+    background: none;
+    border: none;
+    width: 100%;
+    padding: 12px 18px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    border-radius: 0;
+    transition: background 0.15s, color 0.15s;
+    opacity: 1;
+    transform: none;
+    animation: none;
+}
+#saveLoadMenu button:last-child {
+    border-bottom: none;
+}
+#saveLoadMenu button:hover {
+    background: #e0f7fa;
+    color: #227093;
+    transform: none;
+    box-shadow: none;
+}
+#save-load-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+@keyframes bounce {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.18) rotate(-8deg); }
+  50% { transform: scale(0.95) rotate(6deg); }
+  70% { transform: scale(1.08) rotate(-4deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+.bounce {
+  animation: bounce 0.5s cubic-bezier(.36,1.56,.64,1) 1;
+}
+@keyframes fadeSlideIn {
+  0% { opacity: 0; transform: translateY(12px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes fadeSlideOut {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(12px) scale(0.98); }
+}
+#saveLoadMenu.animated-in {
+  animation: fadeSlideIn 0.28s cubic-bezier(.36,1.56,.64,1);
+}
+#saveLoadMenu.animated-out {
+  animation: fadeSlideOut 0.22s cubic-bezier(.36,1.56,.64,1);
+}
+#saveLoadMenu button {
+  transition: background 0.18s, color 0.18s, transform 0.18s;
+}
+#saveLoadMenu button:hover {
+  background: #e0f7fa;
+  color: #227093;
+  transform: none;
+  box-shadow: none;
+}
+form input:focus, form textarea:focus, form select:focus {
+  box-shadow: 0 0 0 3px #218c8d88, 0 2px 8px rgba(34, 112, 147, 0.10);
+  border: 2px solid #218c8d;
+  animation: none;
+}
+#status {
+  opacity: 0;
+  transition: opacity 0.3s;
+  box-shadow: none;
+  background: #fff;
+  border-radius: 12px;
+  padding: 8px 0;
+  margin-top: 18px;
+  color: #227093;
+}
+#status.visible {
+  opacity: 1;
+  animation: none;
+}
+
+.sparkle-checkbox {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  margin-right: 18px;
+  transition: none;
+}
+.sparkle {
+  pointer-events: none;
+  position: absolute;
+  left: 0.5em;
+  top: 50%;
+  width: 1em;
+  height: 1em;
+  transform: translateY(-50%);
+  opacity: 0;
+  z-index: 2;
+}
+.sparkle-animate {
+  animation: sparkle-simple 0.35s cubic-bezier(.36,1.56,.64,1);
+}
+@keyframes sparkle-simple {
+  0% { opacity: 0.7; transform: scale(0.5) translateY(-50%); }
+  50% { opacity: 1; transform: scale(1.1) translateY(-50%); }
+  100% { opacity: 0; transform: scale(0.7) translateY(-50%); }
+}
+.sparkle::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.6em;
+  height: 0.6em;
+  background: radial-gradient(circle, #218c8d 60%, #fff0 100%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0.8;
+}
+.sparkle .sparkle-dot { display: none; }
+
+form input:focus, form textarea:focus, form select:focus {
+  box-shadow: 0 0 0 5px #a084eecc, 0 2px 8px rgba(80, 80, 180, 0.13);
+  border: 2px solid #a084ee;
+  animation: field-pulse 0.5s cubic-bezier(.36,1.56,.64,1);
+}
+@keyframes field-pulse {
+  0% { box-shadow: 0 0 0 0 #a084ee00; }
+  60% { box-shadow: 0 0 0 8px #a084ee55; }
+  100% { box-shadow: 0 0 0 5px #a084eecc; }
+}
+
+#saveBtn, #loadBtn {
+    background: linear-gradient(90deg, #86A8E7 0%, #91EAE4 100%);
+    color: #227093;
+}
+#saveBtn:focus, #loadBtn:focus {
+    outline: 2px solid #218c8d !important;
+    box-shadow: 0 0 0 2px #218c8d44;
+}
+#saveBtn:hover, #loadBtn:hover {
+    background: linear-gradient(90deg, #91EAE4 0%, #86A8E7 100%);
+    color: #218c8d;
+}
+
+form textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+form select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%235a189a" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px 20px;
+    cursor: pointer;
+}
+
+.decorative-svg {
+    margin-bottom: -18px;
+    margin-top: -32px;
+    width: 100%;
+    pointer-events: none;
+}
+
+/* Desktop improvements - larger screens */
+@media (min-width: 768px) {
+    .container {
+        max-width: 800px;
+        width: 90%;
+        margin: 60px auto;
+        padding: 50px 40px 40px 40px;
+        border-radius: 32px;
+        box-shadow: 0 12px 48px 0 rgba(31, 38, 135, 0.25);
+    }
+    
+    h1 {
+        font-size: 2.8rem;
+        margin-bottom: 35px;
+    }
+    
+    .form-section {
+        padding: 28px 24px 18px 24px;
+        margin-bottom: 28px;
+        border-radius: 20px;
+    }
+    
+    .section-title {
+        font-size: 1.4rem;
+        margin-bottom: 18px;
+    }
+    
+    form input, form textarea, form select {
+        padding: 16px 18px;
+        margin-bottom: 24px;
+        border-radius: 16px;
+        font-size: 1.1rem;
+    }
+    
+    form label {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+    
+    button[type="submit"] {
+        padding: 20px;
+        font-size: 1.3rem;
+        border-radius: 22px;
+        margin-top: 25px;
+    }
+    
+    #saveMenuBtn svg {
+        width: 40px;
+        height: 40px;
+    }
+    
+    #saveLoadMenu {
+        min-width: 180px;
+        border-radius: 14px;
+    }
+    
+    #saveLoadMenu button {
+        padding: 16px 22px;
+        font-size: 1.1rem;
+    }
+    
+    /* Improve checkbox groups for desktop */
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px 20px;
+        margin-bottom: 24px;
+    }
+    
+    .checkbox-group label {
+        margin-right: 0;
+        margin-bottom: 0;
+        font-size: 1.05rem;
+        padding: 8px 12px;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+    }
+    
+    .checkbox-group label:hover {
+        background-color: rgba(160, 132, 238, 0.1);
+    }
+    
+    .checkbox-group legend {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+        grid-column: 1 / -1;
+    }
+}
+
+/* Large desktop screens */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1000px;
+        width: 85%;
+        margin: 80px auto;
+        padding: 60px 50px 50px 50px;
+    }
+    
+    h1 {
+        font-size: 3.2rem;
+        margin-bottom: 40px;
+    }
+    
+    .form-section {
+        padding: 32px 28px 22px 28px;
+        margin-bottom: 32px;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+    
+    form input, form textarea, form select {
+        padding: 18px 20px;
+        margin-bottom: 28px;
+        font-size: 1.15rem;
+    }
+    
+    form label {
+        font-size: 1.15rem;
+        margin-bottom: 10px;
+    }
+    
+    button[type="submit"] {
+        padding: 22px;
+        font-size: 1.4rem;
+        margin-top: 30px;
+    }
+    
+    /* Three columns for large screens */
+    .checkbox-group {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px 24px;
+        margin-bottom: 28px;
+    }
+    
+    .checkbox-group label {
+        font-size: 1.1rem;
+        padding: 10px 14px;
+    }
+    
+    .checkbox-group legend {
+        font-size: 1.3rem;
+        margin-bottom: 14px;
+    }
+}
+
+/* Extra large screens */
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1200px;
+        width: 80%;
+        margin: 100px auto;
+        padding: 70px 60px 60px 60px;
+    }
+    
+    h1 {
+        font-size: 3.6rem;
+        margin-bottom: 45px;
+    }
+    
+    .form-section {
+        padding: 36px 32px 26px 32px;
+        margin-bottom: 36px;
+    }
+    
+    .section-title {
+        font-size: 1.6rem;
+        margin-bottom: 22px;
+    }
+    
+    form input, form textarea, form select {
+        padding: 20px 22px;
+        margin-bottom: 32px;
+        font-size: 1.2rem;
+    }
+    
+    form label {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+    }
+    
+    button[type="submit"] {
+        padding: 24px;
+        font-size: 1.5rem;
+        margin-top: 35px;
+    }
+    
+    /* Four columns for extra large screens */
+    .checkbox-group {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px 28px;
+        margin-bottom: 32px;
+    }
+    
+    .checkbox-group label {
+        font-size: 1.15rem;
+        padding: 12px 16px;
+    }
+    
+    .checkbox-group legend {
+        font-size: 1.4rem;
+        margin-bottom: 16px;
+    }
+}
+/* Assignment Success Notification Styles */
+.assignment-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 5000;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: none;
+}
+
+.assignment-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.notification-content {
+    padding: 20px 24px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(76, 175, 80, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 280px;
+    max-width: 350px;
+    position: relative;
+    overflow: hidden;
+    color: white;
+}
+
+/* Color schemes for different people */
+.notification-content.yolandie {
+    background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+    box-shadow: 0 8px 32px rgba(156, 39, 176, 0.3);
+}
+
+.notification-content.francois {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    box-shadow: 0 8px 32px rgba(76, 175, 80, 0.3);
+}
+
+.notification-content.andre {
+    background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+    box-shadow: 0 8px 32px rgba(255, 152, 0, 0.3);
+}
+
+.notification-content.neil {
+    background: linear-gradient(135deg, #009688 0%, #00796B 100%);
+    box-shadow: 0 8px 32px rgba(0, 150, 136, 0.3);
+}
+
+.notification-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.assignment-notification.show .notification-content::before {
+    transform: translateX(100%);
+}
+
+.notification-icon {
+    flex-shrink: 0;
+    animation: iconBounce 0.6s ease 0.3s both;
+}
+
+.notification-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.notification-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.9;
+    letter-spacing: 0.5px;
+    animation: slideInUp 0.5s ease 0.2s both;
+}
+
+.assigned-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    animation: slideInUp 0.5s ease 0.4s both;
+}
+
+/* Animations */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes iconBounce {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2) rotate(-90deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+/* Desktop improvements for notification */
+@media (min-width: 768px) {
+    .assignment-notification {
+        top: 30px;
+        right: 30px;
+    }
+    
+    .notification-content {
+        padding: 24px 28px;
+        border-radius: 20px;
+        min-width: 320px;
+        max-width: 400px;
+        gap: 20px;
+    }
+    
+    .notification-title {
+        font-size: 1rem;
+    }
+    
+    .assigned-name {
+        font-size: 1.6rem;
+    }
+    
+    .notification-icon svg {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .assignment-notification {
+        top: 40px;
+        right: 40px;
+    }
+    
+    .notification-content {
+        padding: 28px 32px;
+        border-radius: 24px;
+        min-width: 360px;
+        max-width: 450px;
+        gap: 24px;
+    }
+    
+    .notification-title {
+        font-size: 1.1rem;
+    }
+    
+    .assigned-name {
+        font-size: 1.8rem;
+    }
+    
+    .notification-icon svg {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 600px) {
+    .assignment-notification {
+        top: 15px;
+        right: 15px;
+        left: 15px;
+        transform: translateY(-100%);
+    }
+    
+    .assignment-notification.show {
+        transform: translateY(0);
+    }
+    
+    .notification-content {
+        min-width: auto;
+        max-width: none;
+        padding: 18px 20px;
+        gap: 14px;
+    }
+    
+    .notification-title {
+        font-size: 0.85rem;
+    }
+    
+    .assigned-name {
+        font-size: 1.3rem;
+    }
+    
+    .notification-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+/* Reset Icon Styles */
+.reset-icon {
+    display: none;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #FF5722 0%, #E64A19 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(255, 87, 34, 0.2);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+}
+
+.reset-icon.show {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.reset-icon:hover {
+    background: linear-gradient(135deg, #E64A19 0%, #D84315 100%);
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 6px 20px rgba(255, 87, 34, 0.4);
+}
+
+.reset-icon:active {
+    transform: scale(0.95) rotate(-5deg);
+    box-shadow: 0 2px 8px rgba(255, 87, 34, 0.3);
+}
+
+.reset-icon svg {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+}
+
+.reset-icon:hover svg {
+    transform: scale(1.1);
+}
+
+/* Desktop improvements for reset icon */
+@media (min-width: 768px) {
+    .reset-icon {
+        width: 40px;
+        height: 40px;
+        margin-left: 12px;
+    }
+    
+    .reset-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .reset-icon {
+        width: 44px;
+        height: 44px;
+        margin-left: 16px;
+    }
+    
+    .reset-icon svg {
+        width: 26px;
+        height: 26px;
+    }
+}
+
+/* Mobile optimizations for reset icon */
+@media (max-width: 600px) {
+    .reset-icon {
+        width: 28px;
+        height: 28px;
+        margin-left: 6px;
+    }
+    
+    .reset-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+} 
