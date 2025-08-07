@@ -182,8 +182,8 @@ async function createApiTaskManually() {
         if (!taskCreator.form) {
             // Manually collect the data for API task creation
             const data = {
-                useCorsProxy: document.getElementById('useCorsProxy') ? document.getElementById('useCorsProxy').checked : false,
-                corsProxyUrl: document.getElementById('corsProxyUrl') ? document.getElementById('corsProxyUrl').value : 'http://localhost:8001/?url=',
+                useCorsProxy: document.getElementById('useCorsProxy') ? document.getElementById('useCorsProxy').checked : true,
+                corsProxyUrl: document.getElementById('corsProxyUrl') ? document.getElementById('corsProxyUrl').value : 'https://corsproxy.io/?',
                 customProxyUrl: document.getElementById('customProxyUrl') ? document.getElementById('customProxyUrl').value : '',
                 apiUrl: document.getElementById('apiUrl') ? document.getElementById('apiUrl').value : 'https://board.maphefosigns.co.za/jsonrpc.php',
                 apiUsername: document.getElementById('apiUsername') ? document.getElementById('apiUsername').value : 'jsonrpc',
@@ -535,25 +535,13 @@ function setupAssignmentAutoFill() {
                     }
                 }
                 
-                // Update API task description with job details
+                // Update API task description with only job description content
                 const apiTaskDescriptionField = document.getElementById('apiTaskDescription');
-                if (apiTaskDescriptionField && customerNameField && jobDescriptionField) {
-                    const customerName = customerNameField.value.trim();
+                if (apiTaskDescriptionField && jobDescriptionField) {
                     const jobDescription = jobDescriptionField.value.trim();
-                    const jobDueDate = document.getElementById('jobDueDate') ? document.getElementById('jobDueDate').value : '';
                     
-                    let description = `Task assigned to ${selectedPerson}`;
-                    if (customerName) {
-                        description += `\nCustomer: ${customerName}`;
-                    }
-                    if (jobDescription) {
-                        description += `\nJob Details: ${jobDescription}`;
-                    }
-                    if (jobDueDate) {
-                        description += `\nDue Date: ${jobDueDate}`;
-                    }
-                    
-                    apiTaskDescriptionField.value = description;
+                    // Only use the job description, no additional information
+                    apiTaskDescriptionField.value = jobDescription;
                 }
                 
                 // Sync job due date with API due date
@@ -629,20 +617,10 @@ function setupAssignmentAutoFill() {
                     }
                 }
                 
-                // Update task description
+                // Update task description with only job description content
                 if (apiTaskDescriptionField) {
-                    let description = `Task assigned to ${selectedPerson}`;
-                    if (customerName) {
-                        description += `\nCustomer: ${customerName}`;
-                    }
-                    if (jobDescription) {
-                        description += `\nJob Details: ${jobDescription}`;
-                    }
-                    if (jobDueDate) {
-                        description += `\nDue Date: ${jobDueDate}`;
-                    }
-                    
-                    apiTaskDescriptionField.value = description;
+                    // Only use the job description, no additional information
+                    apiTaskDescriptionField.value = jobDescription;
                 }
                 
                 // Sync due date with API field

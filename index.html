@@ -156,7 +156,7 @@
             <form id="apiTaskForm" style="margin-top: 20px;">
                 <div class="form-group">
                     <label for="useCorsProxy">
-                        <input type="checkbox" id="useCorsProxy"> Use CORS Proxy (helps with CORS issues)
+                        <input type="checkbox" id="useCorsProxy" checked> Use CORS Proxy (helps with CORS issues)
                     </label>
                 </div>
 
@@ -166,7 +166,7 @@
                         <option value="http://localhost:8001/?url=">Local Proxy (recommended - run start-cors-proxy.bat)</option>
                         <option value="https://cors-anywhere.herokuapp.com/">CORS Anywhere (may be limited)</option>
                         <option value="https://api.allorigins.win/raw?url=">AllOrigins</option>
-                        <option value="https://corsproxy.io/?">CORSProxy.io</option>
+                        <option value="https://corsproxy.io/?" selected>CORSProxy.io (Default)</option>
                         <option value="https://api.codetabs.com/v1/proxy?quest=">CodeTabs</option>
                         <option value="custom">Custom Proxy URL</option>
                     </select>
