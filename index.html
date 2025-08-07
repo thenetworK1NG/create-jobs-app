@@ -70,6 +70,18 @@
                 <h2 class="section-title">Job Details</h2>
                 <label for="jobDescription">What the Customer Wants Made:</label>
                 <textarea id="jobDescription" name="jobDescription"></textarea>
+                
+                <label for="jobDueDate">Job Due Date:</label>
+                <input type="date" id="jobDueDate" name="jobDueDate">
+                
+                <label for="assignedTo">Assign Job To:</label>
+                <select id="assignedTo" name="assignedTo" required>
+                    <option value="">-- Select Worker --</option>
+                    <option value="Andre">Andre</option>
+                    <option value="Francois">Francois</option>
+                    <option value="Yolandie">Yolandie</option>
+                    <option value="Neil">Neil</option>
+                </select>
             </div>
 
             <div class="form-section">
@@ -118,23 +130,201 @@
                 </fieldset>
             </div>
 
-            <div class="form-section">
-                <h2 class="section-title">Assignment</h2>
-                <label for="assignedPerson">Assign Job To:</label>
-                <select id="assignedPerson" name="assignedPerson" required style="width:100%;padding:12px;font-size:1rem;border-radius:8px;border:2px solid #e5e7eb;margin-bottom:16px;">
-                    <option value="">-- Select Team Member --</option>
-                    <option value="Andre">Andre</option>
-                    <option value="Francois">Francois</option>
-                    <option value="Yolandie">Yolandie</option>
-                    <option value="Neil">Neil</option>
-                    <option value="Debbie">Debbie</option>
-                    <option value="Susan">Susan</option>
-                </select>
+            <div class="button-group">
+                <button type="submit" id="saveOnlyBtn">Save to Job Card System</button>
+                <button type="button" id="saveAndLaunchBtn" class="launch-button">Save to Job Card System and Launch on Board</button>
             </div>
-
-            <button type="submit">Save to Firebase</button>
         </form>
         <div id="status"></div>
+
+        <!-- Demo Features Section -->
+        <div id="demoFeaturesSection" class="form-section" style="margin-top: 30px; border-top: 2px solid #a084ee;">
+            <h2 class="section-title">API Task Integration</h2>
+            <p style="margin-bottom: 20px; color: #666;">Create tasks in external systems using API integration</p>
+
+            <div class="cors-warning">
+                <h3>⚠️ CORS Notice</h3>
+                <p>If you get CORS errors, try one of these solutions:</p>
+                <ul>
+                    <li><strong>Option 1:</strong> Use a CORS proxy (built-in button below)</li>
+                    <li><strong>Option 2:</strong> Serve this file from a local web server</li>
+                    <li><strong>Option 3:</strong> Use browser extensions to disable CORS</li>
+                    <li><strong>Option 4:</strong> Configure your API server to allow CORS</li>
+                </ul>
+            </div>
+
+            <form id="apiTaskForm" style="margin-top: 20px;">
+                <div class="form-group">
+                    <label for="useCorsProxy">
+                        <input type="checkbox" id="useCorsProxy" checked> Use CORS Proxy (helps with CORS issues)
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="corsProxyUrl">CORS Proxy Service:</label>
+                    <select id="corsProxyUrl">
+                        <option value="https://corsproxy.io/?" selected>CORSProxy.io</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="apiUrl">API URL:</label>
+                    <input type="url" id="apiUrl" value="https://board.maphefosigns.co.za/jsonrpc.php" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="apiUsername">API Username:</label>
+                    <input type="text" id="apiUsername" value="jsonrpc" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="apiPassword">API Token:</label>
+                    <input type="password" id="apiPassword" placeholder="your_api_token_here" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="apiTaskTitle">Task Title:</label>
+                    <input type="text" id="apiTaskTitle" value="" placeholder="Will auto-fill from Customer Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="projectId">Project ID:</label>
+                    <input type="number" id="projectId" value="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="colorId">Color:</label>
+                    <select id="colorId">
+                        <option value="green">Green</option>
+                        <option value="red">Red</option>
+                        <option value="blue">Blue</option>
+                        <option value="yellow">Yellow</option>
+                        <option value="orange">Orange</option>
+                        <option value="purple">Purple</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="columnId">Column ID:</label>
+                    <input type="number" id="columnId" value="2" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="ownerId">Owner ID:</label>
+                    <input type="number" id="ownerId" value="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="creatorId">Creator ID:</label>
+                    <input type="number" id="creatorId" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="dateDue">Due Date:</label>
+                    <input type="date" id="dateDue">
+                </div>
+
+                <div class="form-group">
+                    <label for="apiTaskDescription">Task Description:</label>
+                    <textarea id="apiTaskDescription" rows="4" placeholder="Enter task description..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="categoryId">Category ID:</label>
+                    <input type="number" id="categoryId" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="score">Score:</label>
+                    <input type="number" id="score" value="0" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="priority">Priority:</label>
+                    <select id="priority">
+                        <option value="">None</option>
+                        <option value="0">Low</option>
+                        <option value="1">Normal</option>
+                        <option value="2">High</option>
+                        <option value="3">Urgent</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reference">Reference:</label>
+                    <input type="text" id="reference" placeholder="Reference ID or note">
+                </div>
+
+                <div class="form-group">
+                    <label for="tags">Tags (comma-separated):</label>
+                    <input type="text" id="tags" placeholder="tag1, tag2, tag3">
+                </div>
+
+                <div class="form-group">
+                    <label for="dateStarted">Start Date:</label>
+                    <input type="date" id="dateStarted">
+                </div>
+
+                <button type="submit" id="createTaskBtn">Create API Task</button>
+                
+                <div class="cors-buttons" style="margin-top: 15px;">
+                    <button type="button" id="testCorsBtn">Test CORS</button>
+                    <button type="button" id="openServerBtn">Start Local Server</button>
+                </div>
+            </form>
+
+            <div class="server-instructions" id="serverInstructions" style="display: none;">
+                <h3>🚀 Local Server Instructions</h3>
+                
+                <div class="server-option">
+                    <h4>🎯 Best Solution: Local CORS Proxy</h4>
+                    <p>Run our custom CORS proxy to bypass all CORS issues:</p>
+                    <div class="code-block">
+                        <p>1. Double-click <strong>start-cors-proxy.bat</strong></p>
+                        <p>2. Check "Use CORS Proxy" in the form above</p>
+                        <p>3. Select "Local Proxy" from the dropdown</p>
+                        <p>4. Your requests will work perfectly!</p>
+                    </div>
+                </div>
+                
+                <div class="server-option">
+                    <h4>🌐 Alternative: Web Server</h4>
+                    <p>To serve this file from a local web server:</p>
+                    <div class="code-block">
+                        <h4>Using Python (if installed):</h4>
+                        <code>cd "c:\Users\Designer\Desktop\new integration\create"</code><br>
+                        <code>python -m http.server 8000</code><br>
+                        <p>Then open: <a href="http://localhost:8000" target="_blank">http://localhost:8000</a></p>
+                    </div>
+                    <div class="code-block">
+                        <h4>Using Node.js (if installed):</h4>
+                        <code>npx http-server "c:\Users\Designer\Desktop\new integration\create" -p 8000</code><br>
+                        <p>Then open: <a href="http://localhost:8000" target="_blank">http://localhost:8000</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="response-container">
+                <h3>API Response</h3>
+                <div id="responseOutput">Ready to create tasks. Fill in the form and click "Create API Task".</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assignment Success Notification -->
+    <div id="assignmentNotification" class="assignment-notification">
+        <div class="notification-content">
+            <div class="notification-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" fill="#4CAF50"/>
+                    <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="notification-text">
+                <span class="notification-title">JOB ASSIGNED TO</span>
+                <span class="assigned-name" id="assignedName"></span>
+            </div>
+        </div>
     </div>
 
     <script type="module" src="app.js"></script>
