@@ -20,7 +20,10 @@ const database = getDatabase(app);
 
 document.getElementById('jobCardForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    saveToJobCardSystem(false); // Save only, don't launch API task
+    // If an Order Number is provided, automatically launch on the board as well
+    const orderNumberEl = document.getElementById('orderNumber');
+    const hasOrderNumber = orderNumberEl && orderNumberEl.value && orderNumberEl.value.trim().length > 0;
+    saveToJobCardSystem(!!hasOrderNumber);
 });
 
 // Main function to save job card data
@@ -50,6 +53,7 @@ function saveToJobCardSystem(shouldLaunchApiTask = false) {
     const date = document.getElementById('date').value;
     const customerCell = document.getElementById('customerCell').value;
     const email = document.getElementById('email').value;
+    const orderNumber = document.getElementById('orderNumber') ? document.getElementById('orderNumber').value.trim() : '';
     const jobTotal = document.getElementById('jobTotal').value;
     const deposit = document.getElementById('deposit').value;
     const balanceDue = document.getElementById('balanceDue').value;
@@ -64,12 +68,14 @@ function saveToJobCardSystem(shouldLaunchApiTask = false) {
     const banner_canvas = getCheckedValues('banner_canvas');
     const boards = getCheckedValues('boards');
 
-    // Save to Firebase
-    push(ref(database, 'jobCards'), {
+    // Build payload
+    const payload = {
         customerName,
         date,
         customerCell,
         email,
+        // Only include orderNumber if provided
+        ...(orderNumber ? { orderNumber } : {}),
         jobTotal,
         deposit,
         balanceDue,
@@ -80,7 +86,30 @@ function saveToJobCardSystem(shouldLaunchApiTask = false) {
         other,
         banner_canvas,
         boards
-    })
+    };
+
+    // If we're going to launch an API task, make sure API form fields are populated
+    if (shouldLaunchApiTask) {
+        try {
+            // Trigger assignment auto-fill if available
+            const assignedToSelect = document.getElementById('assignedTo');
+            if (assignedToSelect) {
+                assignedToSelect.dispatchEvent(new Event('change'));
+            }
+            // Set sensible fallbacks regardless of toggle visibility
+            const apiTaskTitleEl = document.getElementById('apiTaskTitle');
+            if (apiTaskTitleEl && !apiTaskTitleEl.value.trim()) {
+                apiTaskTitleEl.value = customerName;
+            }
+            const apiDueDateEl = document.getElementById('dateDue');
+            if (apiDueDateEl && jobDueDate) {
+                apiDueDateEl.value = jobDueDate;
+            }
+        } catch (_) { /* non-fatal */ }
+    }
+
+    // Save to Firebase
+    push(ref(database, 'jobCards'), payload)
     .then((firebaseRef) => {
         const successMessage = shouldLaunchApiTask ? 
             'Saved to Job Card System! Creating API task...' : 
@@ -204,6 +233,9 @@ async function createApiTaskManually(firebaseRef = null) {
             };
             
             // Create the task using the manual data
+            // Always use a CORS proxy when launching programmatically to avoid browser preflight failures
+            data.useCorsProxy = true;
+            data.corsProxyUrl = data.corsProxyUrl || 'https://corsproxy.io/?';
             const result = await taskCreator.createTask(data);
             
             if (result.result !== false && result.result !== null && result.result !== undefined) {
@@ -227,6 +259,9 @@ async function createApiTaskManually(firebaseRef = null) {
         } else {
             // Use the existing form data collection method
             const taskData = taskCreator.collectFormData();
+            // Force proxy usage to prevent CORS issues during automatic launch
+            taskData.useCorsProxy = true;
+            taskData.corsProxyUrl = taskData.corsProxyUrl || 'https://corsproxy.io/?';
             const result = await taskCreator.createTask(taskData);
             
             if (result.result !== false && result.result !== null && result.result !== undefined) {
@@ -413,6 +448,7 @@ function gatherFormData() {
     date: form.date.value,
     customerCell: form.customerCell.value,
     email: form.email.value,
+    orderNumber: form.orderNumber ? form.orderNumber.value : '',
     jobTotal: form.jobTotal.value,
     deposit: form.deposit.value,
     balanceDue: form.balanceDue.value,
@@ -434,6 +470,7 @@ function fillFormFromData(data) {
   form.date.value = data.date || '';
   form.customerCell.value = data.customerCell || '';
   form.email.value = data.email || '';
+    if (form.orderNumber) form.orderNumber.value = data.orderNumber || '';
   form.jobTotal.value = data.jobTotal || '';
   form.deposit.value = data.deposit || '';
   form.balanceDue.value = data.balanceDue || '';
