@@ -54,6 +54,9 @@ function ensureAuthElements() {
                     <h3 id="loginModalTitle" style="margin-top:0">Select User</h3>
                     <select id="loginUserSelect" aria-label="Select user" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd"></select>
                     <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
+                        <label style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:400;margin-right:auto;">
+                            <input type="checkbox" id="stayLoggedIn" style="margin:0"> Stay logged in
+                        </label>
                         <button id="loginBtn" style="background:#a084ee;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:600">Login</button>
                     </div>
                     <div id="authStatus" style="margin-top:8px;color:#b23c3c"></div>
@@ -92,7 +95,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 async function initializeApp() {
-    // Always force login modal on load
+    // Check for persistent login
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+        authState.username = storedUsername;
+        sessionStorage.setItem("username", storedUsername);
+        if (authElements.logoutBtn) authElements.logoutBtn.style.display = '';
+        if (window.setFormInteractivity) setFormInteractivity(true);
+        return;
+    }
+    // Always force login modal on load if not remembered
     authState.username = null;
     sessionStorage.removeItem("username");
     await showLoginModal();
@@ -176,6 +188,7 @@ async function showLoginModal() {
             authElements.loginBtn.onclick = async () => {
                 const inputEl = document.getElementById('loginUserInput');
                 const username = (authElements.loginUserSelect && authElements.loginUserSelect.value) || (inputEl && inputEl.value) || '';
+                const stayLoggedIn = document.getElementById('stayLoggedIn')?.checked;
                 if (!username) { showError("Please select a user"); return; }
                 try {
                     const res = await fetch(API_BASE + "login_api.php", {
@@ -189,6 +202,11 @@ async function showLoginModal() {
                     if (data.success) {
                         authState.username = username;
                         sessionStorage.setItem("username", username);
+                        if (stayLoggedIn) {
+                            localStorage.setItem("username", username);
+                        } else {
+                            localStorage.removeItem("username");
+                        }
                         csrfToken = data.csrf_token || csrfToken;
                         window.csrfToken = csrfToken;
                         authElements.loginModal.classList.add("hidden");
@@ -233,8 +251,9 @@ async function logout() {
     } finally {
         authState.username = null;
         sessionStorage.removeItem("username");
-    csrfToken = '';
-    window.csrfToken = csrfToken;
+        localStorage.removeItem("username");
+        csrfToken = '';
+        window.csrfToken = csrfToken;
     }
     if (authElements.logoutBtn) authElements.logoutBtn.style.display = 'none';
     if (window.setFormInteractivity) setFormInteractivity(false);

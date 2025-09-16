@@ -1,3 +1,12 @@
+
+// Patch: Refresh API color field on logout
+const originalLogout = window.logout;
+window.logout = async function() {
+  await originalLogout();
+  // Reset color field to default after logout
+  const colorIdEl = document.getElementById('colorId');
+  if (colorIdEl) colorIdEl.value = 'green';
+};
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
 import { getDatabase, ref, push, update } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
@@ -36,21 +45,19 @@ document.getElementById('jobCardForm').addEventListener('submit', function(e) {
 function saveToJobCardSystem(shouldLaunchApiTask = false) {
     // Validate required fields
     const customerName = document.getElementById('customerName').value.trim();
-    const assignedTo = document.getElementById('assignedTo').value;
-    
+  const assignedTo = window.authState && window.authState.username ? window.authState.username : '';
+  // User mapping for API fields
+  const userApiMap = {
+    'Neil':    { ownerId: 9, creatorId: 9, colorId: 'blue' },
+    'Yolandie':{ ownerId: 6, creatorId: 6, colorId: 'purple' },
+    'Andre':   { ownerId: 15, creatorId: 15, colorId: 'green' },
+    'Francois':{ ownerId: 2, creatorId: 2, colorId: 'yellow' }
+  };
+  const userConfig = userApiMap[assignedTo] || { ownerId: 1, creatorId: 0, colorId: 'green' };
     if (!customerName) {
         document.getElementById('status').textContent = 'Customer Name is required.';
         return;
     }
-    
-    if (!assignedTo) {
-        document.getElementById('assignedTo').style.border = '2px solid #b23c3c';
-        document.getElementById('status').textContent = 'Please select who to assign the job to.';
-        return;
-    }
-    
-    // Reset border style if validation passes
-    document.getElementById('assignedTo').style.border = '';
     
     // Show loading state on buttons
     setButtonsLoading(true, shouldLaunchApiTask);
@@ -75,33 +82,62 @@ function saveToJobCardSystem(shouldLaunchApiTask = false) {
     const boards = getCheckedValues('boards');
 
     // Build payload
-    const payload = {
-        customerName,
-        date,
-        customerCell,
-        email,
-        // Only include orderNumber if provided
-        ...(orderNumber ? { orderNumber } : {}),
-        jobTotal,
-        deposit,
-        balanceDue,
-        jobDescription,
-        jobDueDate,
-        assignedTo,
-        stickers,
-        other,
-        banner_canvas,
-        boards
-    };
+  const payload = {
+    customerName,
+    date,
+    customerCell,
+    email,
+    ...(orderNumber ? { orderNumber } : {}),
+    jobTotal,
+    deposit,
+    balanceDue,
+    jobDescription,
+    jobDueDate,
+    assignedTo,
+    stickers,
+    other,
+    banner_canvas,
+    boards,
+    // API task fields
+    title: customerName,
+    project_id: 1, // Set your default project_id or make dynamic if needed
+    color_id: userConfig.colorId,
+    column_id: 2, // Set your default column_id or make dynamic if needed
+    owner_id: userConfig.ownerId,
+    creator_id: userConfig.creatorId,
+    date_due: jobDueDate ? formatDateTime(jobDueDate) : '',
+    description: jobDescription,
+    // Add more fields as needed, e.g. category_id, score, etc.
+    // Example:
+    // category_id: 0,
+    // score: 0,
+    // swimlane_id: null,
+    // priority: null,
+    // recurrence_status: null,
+    // recurrence_trigger: null,
+    // recurrence_factor: null,
+    // recurrence_timeframe: null,
+    // recurrence_basedate: null,
+    // reference: '',
+    // tags: [],
+    date_started: date ? formatDateTime(date) : ''
+  };
+
+  function formatDateTime(dateStr) {
+    // Accepts 'YYYY-MM-DD' or 'YYYY-MM-DDTHH:MM' or 'YYYY-MM-DD HH:MM' and returns 'YYYY-MM-DD HH:MM'
+    if (!dateStr) return '';
+    let d = dateStr.replace('T', ' ');
+    if (/^\d{4}-\d{2}-\d{2}$/.test(d)) {
+      d += ' 00:00';
+    } else if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(d)) {
+      d = d.slice(0, 16);
+    }
+    return d;
+  }
 
     // If we're going to launch an API task, make sure API form fields are populated
     if (shouldLaunchApiTask) {
         try {
-            // Trigger assignment auto-fill if available
-            const assignedToSelect = document.getElementById('assignedTo');
-            if (assignedToSelect) {
-                assignedToSelect.dispatchEvent(new Event('change'));
-            }
             // Set sensible fallbacks regardless of toggle visibility
             const apiTaskTitleEl = document.getElementById('apiTaskTitle');
             if (apiTaskTitleEl && !apiTaskTitleEl.value.trim()) {
@@ -518,157 +554,8 @@ function loadUserDataFromFile(file) {
 }
 
 // Function to setup assignment-based auto-fill for API fields
-function setupAssignmentAutoFill() {
-    const assignedToSelect = document.getElementById('assignedTo');
-    
-    // Assignment to API configuration mapping
-    const assignmentConfig = {
-        'Neil': {
-            ownerId: 9,
-            creatorId: 9,
-            // api creds removed
-            colorId: 'blue'
-        },
-        'Yolandie': {
-            ownerId: 6,
-            creatorId: 6,
-            // api creds removed
-            colorId: 'purple'
-        },
-        'Andre': {
-            ownerId: 15,
-            creatorId: 15,
-            // api creds removed
-            colorId: 'green'
-        },
-        'Francois': {
-            ownerId: 2,
-            creatorId: 2,
-            // api creds removed
-            colorId: 'yellow'
-        }
-    };
-    
-    if (assignedToSelect) {
-        assignedToSelect.addEventListener('change', function() {
-            const selectedPerson = this.value;
-            const config = assignmentConfig[selectedPerson];
-            
-            if (config) {
-                // Update API fields with the person's configuration
-                const ownerIdField = document.getElementById('ownerId');
-                const creatorIdField = document.getElementById('creatorId');
-                const colorIdField = document.getElementById('colorId');
-                const taskTitleField = document.getElementById('apiTaskTitle');
-                
-                if (ownerIdField) ownerIdField.value = config.ownerId;
-                if (creatorIdField) creatorIdField.value = config.creatorId;
-                if (colorIdField) colorIdField.value = config.colorId;
-                
-                // Update task title to use customer name directly
-                const customerNameField = document.getElementById('customerName');
-                const jobDescriptionField = document.getElementById('jobDescription');
-                if (taskTitleField && customerNameField) {
-                    const customerName = customerNameField.value.trim();
-                    if (customerName) {
-                        taskTitleField.value = customerName;
-                    } else {
-                        taskTitleField.value = `New Job - Assigned to ${selectedPerson}`;
-                    }
-                }
-                
-                // Update API task description with only job description content
-                const apiTaskDescriptionField = document.getElementById('apiTaskDescription');
-                if (apiTaskDescriptionField && jobDescriptionField) {
-                    const jobDescription = jobDescriptionField.value.trim();
-                    
-                    // Only use the job description, no additional information
-                    apiTaskDescriptionField.value = jobDescription;
-                }
-                
-                // Sync job due date with API due date
-                const jobDueDateField = document.getElementById('jobDueDate');
-                const apiDueDateField = document.getElementById('dateDue');
-                if (jobDueDateField && apiDueDateField && jobDueDateField.value) {
-                    apiDueDateField.value = jobDueDateField.value;
-                }
-                
-                // Show visual feedback
-                showAssignmentAutoFillNotification(selectedPerson);
-            } else {
-                // Clear API fields if no valid assignment selected
-                const ownerIdField = document.getElementById('ownerId');
-                const creatorIdField = document.getElementById('creatorId');
-                const colorIdField = document.getElementById('colorId');
-                
-                if (ownerIdField) ownerIdField.value = '1';
-                if (creatorIdField) creatorIdField.value = '0';
-                if (colorIdField) colorIdField.value = 'green';
-            }
-        });
-        
-        // Also listen for customer name changes to update task title
-        const customerNameField = document.getElementById('customerName');
-        const jobDescriptionField = document.getElementById('jobDescription');
-        const jobDueDateField = document.getElementById('jobDueDate');
-        
-        if (customerNameField) {
-            customerNameField.addEventListener('input', function() {
-                updateApiTaskFields();
-            });
-        }
-        
-        if (jobDescriptionField) {
-            jobDescriptionField.addEventListener('input', function() {
-                updateApiTaskFields();
-            });
-        }
-        
-        if (jobDueDateField) {
-            jobDueDateField.addEventListener('change', function() {
-                updateApiTaskFields();
-                // Also sync with API due date field
-                const apiDueDateField = document.getElementById('dateDue');
-                if (apiDueDateField) {
-                    apiDueDateField.value = this.value;
-                }
-            });
-        }
-        
-        // Function to update API task fields based on current form values
-        function updateApiTaskFields() {
-            const selectedPerson = assignedToSelect.value;
-            const taskTitleField = document.getElementById('apiTaskTitle');
-            const apiTaskDescriptionField = document.getElementById('apiTaskDescription');
-            const apiDueDateField = document.getElementById('dateDue');
-            const customerName = customerNameField ? customerNameField.value.trim() : '';
-            const jobDescription = jobDescriptionField ? jobDescriptionField.value.trim() : '';
-            const jobDueDate = jobDueDateField ? jobDueDateField.value : '';
-            
-            if (selectedPerson) {
-                // Update task title to use customer name directly
-                if (taskTitleField) {
-                    if (customerName) {
-                        taskTitleField.value = customerName;
-                    } else {
-                        taskTitleField.value = `New Job - Assigned to ${selectedPerson}`;
-                    }
-                }
-                
-                // Update task description with only job description content
-                if (apiTaskDescriptionField) {
-                    // Only use the job description, no additional information
-                    apiTaskDescriptionField.value = jobDescription;
-                }
-                
-                // Sync due date with API field
-                if (apiDueDateField && jobDueDate) {
-                    apiDueDateField.value = jobDueDate;
-                }
-            }
-        }
-    }
-}
+// Assignment auto-fill is no longer needed since assignment is based on logged-in user.
+function setupAssignmentAutoFill() { return; }
 
 // Function to show auto-fill notification
 function showAssignmentAutoFillNotification(personName) {
@@ -850,6 +737,19 @@ function ensureOptimalCentering() {
 
 // Set up event listeners for save/load buttons
 window.addEventListener('DOMContentLoaded', function() {
+  // Helper to set API color field to user-mapped color
+  function setApiColorForUser() {
+    const assignedTo = window.authState && window.authState.username ? window.authState.username : '';
+    const userApiMap = {
+      'Neil':    { colorId: 'blue' },
+      'Yolandie':{ colorId: 'purple' },
+      'Andre':   { colorId: 'green' },
+      'Francois':{ colorId: 'yellow' }
+    };
+    const userConfig = userApiMap[assignedTo] || { colorId: 'green' };
+    const colorIdEl = document.getElementById('colorId');
+    if (colorIdEl) colorIdEl.value = userConfig.colorId;
+  }
   // Initialize the Enhanced Task Creator and store reference
   window.enhancedTaskCreatorInstance = new EnhancedTaskCreator();
   
@@ -873,10 +773,10 @@ window.addEventListener('DOMContentLoaded', function() {
       if (demoSection) {
         const isHidden = demoSection.style.display === 'none';
         demoSection.style.display = isHidden ? 'block' : 'none';
-        
+        // Set color field to user-mapped color when showing
+        if (isHidden) setApiColorForUser();
         // Update button text
         this.textContent = isHidden ? 'Hide API Integration' : 'Show API Integration';
-        
         // Scroll to the section if showing it
         if (isHidden) {
           setTimeout(() => {
@@ -889,6 +789,8 @@ window.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+  // Set color field on load (in case API section is already visible)
+  setApiColorForUser();
   
   // Setup assignment-based API field auto-population
   setupAssignmentAutoFill();

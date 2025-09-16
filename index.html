@@ -10,7 +10,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <button id="logoutBtn" style="position:fixed;top:18px;right:18px;z-index:1001;background:#fff;color:#a084ee;border:1px solid #a084ee;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600;display:none">Logout</button>
+    <div class="top-actions" style="position:fixed;top:18px;right:18px;z-index:1001;display:flex;gap:10px;">
+        <button id="logoutBtn" style="background:#fff;color:#a084ee;border:1px solid #a084ee;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600;display:none">Logout</button>
+        <button id="settingsBtn" title="Settings" style="background:#fff;color:#a084ee;border:1px solid #a084ee;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600;">⚙️</button>
+    </div>
     <div class="container">
         <div class="decorative-svg" aria-hidden="true">
             <svg width="100%" height="60" viewBox="0 0 400 60" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,14 +64,7 @@
                 <label for="jobDueDate">Job Due Date:</label>
                 <input type="date" id="jobDueDate" name="jobDueDate">
                 
-                <label for="assignedTo">Assign Job To:</label>
-                <select id="assignedTo" name="assignedTo" required>
-                    <option value="">-- Select Worker --</option>
-                    <option value="Andre">Andre</option>
-                    <option value="Francois">Francois</option>
-                    <option value="Yolandie">Yolandie</option>
-                    <option value="Neil">Neil</option>
-                </select>
+
             </div>
 
             <div class="form-section">
@@ -293,8 +289,59 @@
     <!-- Auth modal (reused styling) -->
     <div id="loginModal" class="modal hidden" role="dialog" aria-labelledby="loginModalTitle" aria-modal="true" tabindex="-1" style="display:none"></div>
 
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden" role="dialog" aria-labelledby="settingsModalTitle" aria-modal="true" tabindex="-1" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.35);z-index:2000;">
+        <div class="modal-content" style="background:#fff;padding:20px;border-radius:10px;min-width:320px;max-width:90vw;box-shadow:0 10px 30px rgba(0,0,0,0.15);position:relative;">
+            <button id="closeSettingsBtn" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
+            <h3 id="settingsModalTitle" style="margin-top:0">Settings</h3>
+            <label style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:400;margin:18px 0;">
+                <input type="checkbox" id="settingsStayLoggedIn">
+                Stay logged in
+            </label>
+        </div>
+    </div>
+
     <!-- Load auth and API proxy before application logic -->
     <script src="auth.js"></script>
+    <script>
+    // Settings modal logic
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsModal = document.getElementById('settingsModal');
+    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+    const settingsStayLoggedIn = document.getElementById('settingsStayLoggedIn');
+
+    // Open settings modal
+    settingsBtn.addEventListener('click', () => {
+        // Sync checkbox with localStorage
+        settingsStayLoggedIn.checked = !!localStorage.getItem('username');
+        settingsModal.style.display = 'flex';
+        settingsModal.classList.remove('hidden');
+    });
+
+    // Close settings modal
+    closeSettingsBtn.addEventListener('click', () => {
+        settingsModal.style.display = 'none';
+        settingsModal.classList.add('hidden');
+    });
+
+    // Update stay logged in preference
+    settingsStayLoggedIn.addEventListener('change', () => {
+        const username = sessionStorage.getItem('username');
+        if (settingsStayLoggedIn.checked && username) {
+            localStorage.setItem('username', username);
+        } else {
+            localStorage.removeItem('username');
+        }
+    });
+
+    // Optional: close modal on outside click
+    settingsModal.addEventListener('click', (e) => {
+        if (e.target === settingsModal) {
+            settingsModal.style.display = 'none';
+            settingsModal.classList.add('hidden');
+        }
+    });
+    </script>
     <script src="api-proxy.js"></script>
     <script type="module" src="app.js"></script>
 </body>
