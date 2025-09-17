@@ -443,6 +443,12 @@ function resetForm() {
             }, 300);
         }
         
+    // Also clear the API Task Description to keep both fields in sync
+    const apiTaskDescriptionEl = document.getElementById('apiTaskDescription');
+    if (apiTaskDescriptionEl) {
+      apiTaskDescriptionEl.value = '';
+    }
+        
         // Show confirmation
         showResetConfirmation();
     }
@@ -459,6 +465,21 @@ function showResetConfirmation() {
             status.textContent = '';
         }, 2000);
     }
+}
+
+// Keep API Task Description synced with Job Description as the user types
+function setupDescriptionMirroring() {
+  const jobDesc = document.getElementById('jobDescription');
+  const apiDesc = document.getElementById('apiTaskDescription');
+  if (!jobDesc || !apiDesc) return;
+
+  // Initialize API description with current job description
+  apiDesc.value = jobDesc.value || '';
+
+  // Mirror on every input
+  jobDesc.addEventListener('input', () => {
+    apiDesc.value = jobDesc.value;
+  });
 }
 
 // Example user data object (replace with your actual data structure)
@@ -505,6 +526,9 @@ function fillFormFromData(data) {
   form.deposit.value = data.deposit || '';
   form.balanceDue.value = data.balanceDue || '';
   form.jobDescription.value = data.jobDescription || '';
+  // Keep API Task Description in sync when loading data
+  const apiTaskDescriptionEl = document.getElementById('apiTaskDescription');
+  if (apiTaskDescriptionEl) apiTaskDescriptionEl.value = data.jobDescription || '';
   form.jobDueDate.value = data.jobDueDate || '';
   form.assignedTo.value = data.assignedTo || '';
   // Uncheck all checkboxes first
@@ -799,6 +823,8 @@ window.addEventListener('DOMContentLoaded', function() {
   setupAutoScroll();
   setupEnhancedTabNavigation();
   setupSectionHighlighting();
+  // Live mirror Job Description -> API Task Description
+  setupDescriptionMirroring();
   
   // Ensure optimal centering setup
   ensureOptimalCentering();
