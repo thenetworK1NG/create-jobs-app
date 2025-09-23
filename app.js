@@ -448,6 +448,12 @@ function resetForm() {
     if (apiTaskDescriptionEl) {
       apiTaskDescriptionEl.value = '';
     }
+    // Also clear the API Due Date to keep fields in sync
+    const apiDateDueEl = document.getElementById('dateDue');
+    if (apiDateDueEl) apiDateDueEl.value = '';
+  // Also clear the API Start Date to keep fields in sync
+  const apiDateStartedEl = document.getElementById('dateStarted');
+  if (apiDateStartedEl) apiDateStartedEl.value = '';
         
         // Show confirmation
         showResetConfirmation();
@@ -530,6 +536,13 @@ function fillFormFromData(data) {
   const apiTaskDescriptionEl = document.getElementById('apiTaskDescription');
   if (apiTaskDescriptionEl) apiTaskDescriptionEl.value = data.jobDescription || '';
   form.jobDueDate.value = data.jobDueDate || '';
+  // Also populate the API dateDue field so API form reflects the loaded due date
+  const apiDateDueEl = document.getElementById('dateDue');
+  if (apiDateDueEl) apiDateDueEl.value = data.jobDueDate || '';
+  // Populate the API Start Date from the main Date field
+  form.date.value = data.date || '';
+  const apiDateStartedEl = document.getElementById('dateStarted');
+  if (apiDateStartedEl) apiDateStartedEl.value = data.date || '';
   form.assignedTo.value = data.assignedTo || '';
   // Uncheck all checkboxes first
   ['stickers','other','banner_canvas','boards'].forEach(name => {
@@ -541,6 +554,54 @@ function fillFormFromData(data) {
       if (cb) cb.checked = true;
     });
   });
+}
+
+// Mirror the Job Due Date and API Due Date fields both ways
+function setupDueDateMirroring() {
+  const jobDueEl = document.getElementById('jobDueDate');
+  const apiDueEl = document.getElementById('dateDue');
+  if (!jobDueEl && !apiDueEl) return;
+
+  // When job due changes, update API due
+  if (jobDueEl) {
+    jobDueEl.addEventListener('input', () => {
+      try {
+        if (apiDueEl) apiDueEl.value = jobDueEl.value;
+      } catch (e) { /* non-fatal */ }
+    });
+  }
+
+  // If API due changed manually, reflect it back to job due
+  if (apiDueEl) {
+    apiDueEl.addEventListener('input', () => {
+      try {
+        if (jobDueEl) jobDueEl.value = apiDueEl.value;
+      } catch (e) { /* non-fatal */ }
+    });
+  }
+}
+
+// Mirror the main Date field and the API Start Date field both ways
+function setupStartDateMirroring() {
+  const mainDateEl = document.getElementById('date');
+  const apiStartEl = document.getElementById('dateStarted');
+  if (!mainDateEl && !apiStartEl) return;
+
+  if (mainDateEl) {
+    mainDateEl.addEventListener('input', () => {
+      try {
+        if (apiStartEl) apiStartEl.value = mainDateEl.value;
+      } catch (e) { /* non-fatal */ }
+    });
+  }
+
+  if (apiStartEl) {
+    apiStartEl.addEventListener('input', () => {
+      try {
+        if (mainDateEl) mainDateEl.value = apiStartEl.value;
+      } catch (e) { /* non-fatal */ }
+    });
+  }
 }
 
 // Update saveUserData to gather form data
@@ -825,6 +886,10 @@ window.addEventListener('DOMContentLoaded', function() {
   setupSectionHighlighting();
   // Live mirror Job Description -> API Task Description
   setupDescriptionMirroring();
+  // Mirror due date fields between main form and API form
+  setupDueDateMirroring();
+  // Mirror main Date <-> API Start Date
+  setupStartDateMirroring();
   
   // Ensure optimal centering setup
   ensureOptimalCentering();
