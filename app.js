@@ -102,17 +102,17 @@ function saveToJobCardSystem(shouldLaunchApiTask = false) {
     title: customerName,
     project_id: 1, // Set your default project_id or make dynamic if needed
     color_id: userConfig.colorId,
-    column_id: 2, // Set your default column_id or make dynamic if needed
+    column_id: parseInt(document.getElementById('boardColumn')?.value) || 2,
     owner_id: userConfig.ownerId,
     creator_id: userConfig.creatorId,
     date_due: jobDueDate ? formatDateTime(jobDueDate) : '',
     description: jobDescription,
+    priority: parseInt(document.getElementById('taskPriority')?.value) || 1,
     // Add more fields as needed, e.g. category_id, score, etc.
     // Example:
     // category_id: 0,
     // score: 0,
     // swimlane_id: null,
-    // priority: null,
     // recurrence_status: null,
     // recurrence_trigger: null,
     // recurrence_factor: null,
@@ -757,9 +757,11 @@ function setupEnhancedTabNavigation() {
   focusableElements.forEach(element => {
     // Add focus styles
     element.addEventListener('focus', function() {
-      this.style.outline = '2px solid #a084ee';
+      const computedStyle = getComputedStyle(document.documentElement);
+      const primaryColor = computedStyle.getPropertyValue('--theme-primary').trim() || '#a084ee';
+      this.style.outline = `2px solid ${primaryColor}`;
       this.style.outlineOffset = '2px';
-      this.style.boxShadow = '0 0 0 3px rgba(160, 132, 238, 0.2)';
+      this.style.boxShadow = '0 0 0 3px var(--theme-shadow, rgba(160, 132, 238, 0.2))';
       
       // Add a subtle animation for better visual feedback
       this.style.transform = 'scale(1.02)';
@@ -784,8 +786,10 @@ function setupSectionHighlighting() {
     
     inputs.forEach(input => {
       input.addEventListener('focus', function() {
-        section.style.borderLeft = '4px solid #a084ee';
-        section.style.boxShadow = '0 4px 16px rgba(160, 132, 238, 0.15)';
+        const computedStyle = getComputedStyle(document.documentElement);
+        const primaryColor = computedStyle.getPropertyValue('--theme-primary').trim() || '#a084ee';
+        section.style.borderLeft = `4px solid ${primaryColor}`;
+        section.style.boxShadow = '0 4px 16px var(--theme-shadow, rgba(160, 132, 238, 0.15))';
         section.style.transition = 'all 0.3s ease';
       });
       
@@ -793,8 +797,10 @@ function setupSectionHighlighting() {
         // Check if any other input in this section is focused
         const hasFocus = Array.from(inputs).some(input => input === document.activeElement);
         if (!hasFocus) {
-          section.style.borderLeft = '4px solid #a084ee33';
-          section.style.boxShadow = '0 2px 8px rgba(160, 132, 238, 0.06)';
+          const computedStyle = getComputedStyle(document.documentElement);
+          const primaryColor = computedStyle.getPropertyValue('--theme-primary').trim() || '#a084ee';
+          section.style.borderLeft = `4px solid ${primaryColor}33`;
+          section.style.boxShadow = '0 2px 8px var(--theme-shadow, rgba(160, 132, 238, 0.06))';
         }
       });
     });

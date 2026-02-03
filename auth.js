@@ -57,7 +57,7 @@ function ensureAuthElements() {
                         <label style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:400;margin-right:auto;">
                             <input type="checkbox" id="stayLoggedIn" style="margin:0"> Stay logged in
                         </label>
-                        <button id="loginBtn" style="background:#a084ee;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:600">Login</button>
+                        <button id="loginBtn" class="themed-btn" style="padding:8px 14px;">Login</button>
                     </div>
                     <div id="authStatus" style="margin-top:8px;color:#b23c3c"></div>
                 </div>
@@ -73,7 +73,7 @@ function ensureAuthElements() {
                 <h3 id="loginModalTitle" style="margin-top:0">Select User</h3>
                 <select id="loginUserSelect" aria-label="Select user" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ddd"></select>
                 <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
-                    <button id="loginBtn" style="background:#a084ee;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:600">Login</button>
+                    <button id="loginBtn" class="themed-btn" style="padding:8px 14px;">Login</button>
                 </div>
                 <div id="authStatus" style="margin-top:8px;color:#b23c3c"></div>
             </div>

@@ -11,8 +11,25 @@
 </head>
 <body>
     <div class="top-actions" style="position:fixed;top:18px;right:18px;z-index:1001;display:flex;gap:10px;">
-        <button id="logoutBtn" style="background:#fff;color:#a084ee;border:1px solid #a084ee;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600;display:none">Logout</button>
-        <button id="settingsBtn" title="Settings" style="background:#fff;color:#a084ee;border:1px solid #a084ee;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:600;">⚙️</button>
+        <button id="logoutBtn" style="background:var(--theme-glass-bg, #fff);color:var(--theme-primary, #4f46e5);border:1px solid var(--theme-primary, #4f46e5);padding:8px 16px;border-radius:10px;cursor:pointer;font-weight:600;display:none;backdrop-filter:blur(8px);transition:all 0.3s ease;">Logout</button>
+        <button id="themeBtn" title="Change Theme" style="background:var(--theme-glass-bg, #fff);color:var(--theme-primary, #4f46e5);border:1px solid var(--theme-primary, #4f46e5);padding:8px 16px;border-radius:10px;cursor:pointer;font-weight:600;backdrop-filter:blur(8px);transition:all 0.3s ease;">🎨</button>
+        <button id="settingsBtn" title="Settings" style="background:var(--theme-glass-bg, #fff);color:var(--theme-primary, #4f46e5);border:1px solid var(--theme-primary, #4f46e5);padding:8px 16px;border-radius:10px;cursor:pointer;font-weight:600;backdrop-filter:blur(8px);transition:all 0.3s ease;">⚙️</button>
+    </div>
+
+    <!-- Theme Picker Modal -->
+    <div id="themeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:3000;align-items:center;justify-content:center;">
+        <div style="background:var(--theme-glass-bg, #fff);padding:28px 32px;border-radius:20px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.2);backdrop-filter:blur(12px);border:1px solid var(--theme-glass-border, rgba(255,255,255,0.4));">
+            <h3 style="margin:0 0 20px 0;font-size:1.4rem;background:linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Choose Your Theme</h3>
+            <div id="themeOptions" style="display:grid;grid-template-columns:repeat(3, 1fr);gap:12px;margin-bottom:20px;">
+                <button class="theme-option" data-theme="default" style="width:100%;aspect-ratio:1;border-radius:16px;border:3px solid transparent;cursor:pointer;background:linear-gradient(135deg, #4f46e5, #06b6d4);transition:all 0.3s ease;position:relative;" title="Ocean Blue"></button>
+                <button class="theme-option" data-theme="purple" style="width:100%;aspect-ratio:1;border-radius:16px;border:3px solid transparent;cursor:pointer;background:linear-gradient(135deg, #8b5cf6, #ec4899);transition:all 0.3s ease;" title="Purple Galaxy"></button>
+                <button class="theme-option" data-theme="green" style="width:100%;aspect-ratio:1;border-radius:16px;border:3px solid transparent;cursor:pointer;background:linear-gradient(135deg, #10b981, #14b8a6);transition:all 0.3s ease;" title="Emerald Forest"></button>
+                <button class="theme-option" data-theme="orange" style="width:100%;aspect-ratio:1;border-radius:16px;border:3px solid transparent;cursor:pointer;background:linear-gradient(135deg, #f97316, #f43f5e);transition:all 0.3s ease;" title="Sunset Orange"></button>
+                <button class="theme-option" data-theme="pink" style="width:100%;aspect-ratio:1;border-radius:16px;border:3px solid transparent;cursor:pointer;background:linear-gradient(135deg, #ec4899, #8b5cf6);transition:all 0.3s ease;" title="Rose Pink"></button>
+                <button class="theme-option" data-theme="dark" style="width:100%;aspect-ratio:1;border-radius:16px;border:3px solid transparent;cursor:pointer;background:linear-gradient(135deg, #1e293b, #0f172a);transition:all 0.3s ease;" title="Slate Dark"></button>
+            </div>
+            <button id="closeThemeModal" style="width:100%;padding:12px;background:linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));color:#fff;border:none;border-radius:12px;font-weight:600;cursor:pointer;transition:all 0.3s ease;">Done</button>
+        </div>
     </div>
     <div class="container">
         <div class="decorative-svg" aria-hidden="true">
@@ -64,7 +81,25 @@
                 <label for="jobDueDate">Job Due Date:</label>
                 <input type="date" id="jobDueDate" name="jobDueDate">
                 
-
+                <label for="boardColumn">Place on Board Column:</label>
+                <select id="boardColumn" name="boardColumn" style="margin-bottom:12px;">
+                    <option value="2">📥 New (Default)</option>
+                    <option value="1">📋 Backlog</option>
+                    <option value="5">⏳ Pending Action</option>
+                    <option value="3">🎨 Design</option>
+                    <option value="8">🖨️ Queue for Printing</option>
+                    <option value="6">⚙️ Printing</option>
+                    <option value="7">🏭 Factory</option>
+                    <option value="4">✅ Done</option>
+                </select>
+                
+                <label for="taskPriority">Priority:</label>
+                <select id="taskPriority" name="taskPriority">
+                    <option value="1">🟢 Normal</option>
+                    <option value="0">⚪ Low</option>
+                    <option value="2">🟠 High</option>
+                    <option value="3">🔴 Urgent</option>
+                </select>
             </div>
 
             <div class="form-section">
@@ -121,7 +156,7 @@
 
         <!-- API Toggle Button (hidden by default, press Ctrl+Shift+A to show) -->
         <div id="apiToggleContainer" style="text-align: center; margin: 20px 0; display: none;">
-            <button type="button" id="toggleApiBtn" style="background: #a084ee; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600;">
+            <button type="button" id="toggleApiBtn" class="themed-btn" style="padding: 10px 20px;">
                 Show API Integration
             </button>
         </div>
@@ -303,6 +338,68 @@
     <!-- Load auth and API proxy before application logic -->
     <script src="auth.js"></script>
     <script>
+    // Theme Picker Logic
+    const themeBtn = document.getElementById('themeBtn');
+    const themeModal = document.getElementById('themeModal');
+    const closeThemeModal = document.getElementById('closeThemeModal');
+    const themeOptions = document.querySelectorAll('.theme-option');
+
+    // Load saved theme on startup
+    const savedTheme = localStorage.getItem('userTheme') || 'default';
+    if (savedTheme !== 'default') {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+    // Highlight active theme
+    themeOptions.forEach(opt => {
+        if (opt.dataset.theme === savedTheme) {
+            opt.style.borderColor = 'var(--theme-primary)';
+            opt.style.transform = 'scale(1.1)';
+        }
+    });
+
+    themeBtn.addEventListener('click', () => {
+        themeModal.style.display = 'flex';
+    });
+
+    closeThemeModal.addEventListener('click', () => {
+        themeModal.style.display = 'none';
+    });
+
+    themeModal.addEventListener('click', (e) => {
+        if (e.target === themeModal) themeModal.style.display = 'none';
+    });
+
+    themeOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const theme = option.dataset.theme;
+            if (theme === 'default') {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('userTheme', 'default');
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('userTheme', theme);
+            }
+            // Update active state
+            themeOptions.forEach(opt => {
+                opt.style.borderColor = 'transparent';
+                opt.style.transform = 'scale(1)';
+            });
+            option.style.borderColor = '#fff';
+            option.style.transform = 'scale(1.1)';
+        });
+
+        // Hover effects
+        option.addEventListener('mouseenter', () => {
+            option.style.transform = 'scale(1.08)';
+            option.style.boxShadow = '0 8px 24px rgba(0,0,0,0.2)';
+        });
+        option.addEventListener('mouseleave', () => {
+            const isActive = option.dataset.theme === (localStorage.getItem('userTheme') || 'default');
+            option.style.transform = isActive ? 'scale(1.1)' : 'scale(1)';
+            option.style.boxShadow = 'none';
+        });
+    });
+
     // Settings modal logic
     const settingsBtn = document.getElementById('settingsBtn');
     const settingsModal = document.getElementById('settingsModal');
