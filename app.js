@@ -822,6 +822,21 @@ function ensureOptimalCentering() {
 
 // Set up event listeners for save/load buttons
 window.addEventListener('DOMContentLoaded', function() {
+  // Keyboard shortcut to show API Integration button (Ctrl+Shift+A)
+  document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+      e.preventDefault();
+      const apiToggleContainer = document.getElementById('apiToggleContainer');
+      if (apiToggleContainer) {
+        const isHidden = apiToggleContainer.style.display === 'none';
+        apiToggleContainer.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) {
+          apiToggleContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    }
+  });
+
   // Helper to set API color field to user-mapped color
   function setApiColorForUser() {
     const assignedTo = window.authState && window.authState.username ? window.authState.username : '';
