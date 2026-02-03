@@ -277,3 +277,4 @@ function escapeHtml(unsafe) {
 window.checkLogin = checkLogin;
 window.showLoginModal = showLoginModal;
 window.logout = logout;
+window.getCsrfToken = getCsrfToken;

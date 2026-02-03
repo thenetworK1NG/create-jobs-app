@@ -8,15 +8,15 @@ const createApiConfig = {
 
 async function callKanboard(method, params = {}, _retryCount = 0) {
     // Ensure logged in first
-    if (!authState || !authState.username) {
-        await showLoginModal();
+    if (!window.authState || !window.authState.username) {
+        await window.showLoginModal();
         if (_retryCount >= 2) throw new Error('Authentication failed after multiple attempts');
         return callKanboard(method, params, _retryCount + 1);
     }
 
     // Ensure CSRF token
-    if (!csrfToken) {
-        try { await getCsrfToken(); } catch (_) {}
+    if (!window.csrfToken) {
+        try { await window.getCsrfToken(); } catch (_) {}
     }
 
     const response = await fetch(createApiConfig.apiProxyUrl, {
@@ -24,23 +24,23 @@ async function callKanboard(method, params = {}, _retryCount = 0) {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'X-CSRF-Token': csrfToken || ''
+            'X-CSRF-Token': window.csrfToken || ''
         },
         body: JSON.stringify({
             jsonrpc: '2.0',
             method,
             params,
             id: 1,
-            csrf_token: csrfToken || ''
+            csrf_token: window.csrfToken || ''
         }),
         credentials: 'include'
     });
 
     if (response.status === 401) {
-        authState.username = null;
+        window.authState.username = null;
         sessionStorage.removeItem('username');
-        csrfToken = '';
-        await showLoginModal();
+        window.csrfToken = '';
+        await window.showLoginModal();
         if (_retryCount >= 2) throw new Error('Authentication failed after multiple attempts');
         return callKanboard(method, params, _retryCount + 1);
     }
@@ -50,10 +50,10 @@ async function callKanboard(method, params = {}, _retryCount = 0) {
     if (data.error) {
         const msg = data.error.message || data.error;
         if (/Session expired|invalid user|401|403/i.test(msg)) {
-            authState.username = null;
+            window.authState.username = null;
             sessionStorage.removeItem('username');
-            csrfToken = '';
-            await showLoginModal();
+            window.csrfToken = '';
+            await window.showLoginModal();
             if (_retryCount >= 2) throw new Error('Authentication failed after multiple attempts');
             return callKanboard(method, params, _retryCount + 1);
         }
